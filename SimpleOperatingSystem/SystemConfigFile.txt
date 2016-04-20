@@ -1,0 +1,5 @@
+MUSIC: [1.mp3, 2.mp3]
+PICTURE: [1.jpg, 2.jpg]
+DOCUMENT: [1.doc, 2.doc, 3.doc]
+/*
+*/

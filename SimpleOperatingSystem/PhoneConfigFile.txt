@@ -1,0 +1,2 @@
+MUSIC: []
+PICTURE: [2.jpg]
