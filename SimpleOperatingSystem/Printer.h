@@ -11,9 +11,9 @@ public:
 
 	void display();
 
-	void scan(std::unordered_map<FileHandler::FileType, int> updates);
+	void scan(std::string fileName, FileHandler::FileType type);
 
-	void print(std::unordered_map<FileHandler::FileType, int> updates);
+	void print(std::string fileName, FileHandler::FileType type);
 };
 
 #endif

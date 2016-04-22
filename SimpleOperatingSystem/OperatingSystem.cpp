@@ -41,6 +41,7 @@ bool OperatingSystem::installDeviceDriver(string deviceName, int type, string pa
 		return false;
 	}
 }
+
 //bool OperatingSystem::uninstallDeviceDriver(string deviceName, int type, string path);
 
 void OperatingSystem::initialize() {
@@ -73,6 +74,8 @@ void OperatingSystem::initialize() {
 
 		mFile.close();
 	}
+
+	this->update(FileHandler::pleb_key(*this));
 }
 
 void OperatingSystem::uninitialize() {
@@ -115,6 +118,7 @@ void OperatingSystem::uninitialize() {
 		}
 
 		strm << "*/" << endl;
+
 		strm.close();
 	}
 }
@@ -183,70 +187,92 @@ void OperatingSystem::connectDevice(string deviceName) {
 		}
 	}
 }
-//void OperatingSystem::disconnectDevice(string deviceName);
-//
+
+void OperatingSystem::disconnectDevice(string deviceName) {
+
+	if (isInstalled(deviceName)) {
+
+		if (this->devices[deviceName]->isConnected()) {
+			this->devices[deviceName]->setConnection(false);
+			cout << "Device Disconnected" << endl;
+		}
+		else {
+			cout << "Device Already Disconnected" << endl;
+		}
+	}
+	else {
+		cout << "Device Not Recognized" << endl;
+	}
+}
+
 void OperatingSystem::displayInstalledDevices() {
 
 	for (unordered_map<string, shared_ptr<Device>>::iterator itr = this->devices.begin(); itr != this->devices.end(); ++itr) {
 		cout << itr->first << " is a ";
 		itr->second->display();
-
-		shared_ptr<Operations::Syncable> ptr = dynamic_pointer_cast<Operations::Syncable>(itr->second);
-		if (ptr) {
-
-			unordered_map<FileHandler::FileType, forward_list<string>> master = FileHandler::master_key(FileHandler::pleb_key(*ptr), FileHandler::pleb_key(*this));
-
-			for (unordered_map<FileHandler::FileType, forward_list<string>>::iterator masterITR = master.begin(); masterITR != master.end(); ++masterITR) {
-
-				forward_list<string> changed = masterITR->second;
-				cout << FileHandler::toString(masterITR->first) << ": [";
-				bool first = true;
-
-				for (forward_list<string>::iterator innerITR = changed.begin(); innerITR != changed.end(); ++innerITR) {
-					if (first) { cout << *innerITR; first = false; }
-					else cout << ", " << *innerITR;
-				}
-				cout << "]" << endl;
-			}
-
-			ptr->sync(ptr->update(master));
-			this->update(master);
-		}
-
-		/*shared_ptr<Operations::Syncable> ptr = dynamic_pointer_cast<Operations::Syncable>(itr->second);
-		if (ptr) {
-
-		unordered_set<FileHandler::FileType> set = ptr->getFileTypes();
-		for (unordered_set<FileHandler::FileType>::iterator pItr = set.begin(); pItr != set.end(); ++pItr) {
-		cout << FileHandler::toString(*pItr) << endl;
-		}
-
-		unordered_map<string, forward_list<string>> files = FileHandler::pleb_key(*ptr);
-		for (unordered_map<string, forward_list<string>>::iterator mItr = files.begin(); mItr != files.end(); ++mItr) {
-
-		forward_list<string> changed = mItr->second;
-		cout << mItr->first << ": [";
-		bool first = true;
-
-		for (forward_list<string>::iterator fItr = changed.begin(); fItr != changed.end(); ++fItr) {
-		if (first) { cout << *fItr; first = false; }
-		else cout << ", " << *fItr;
-		}
-		cout << "]" << endl;
-		}*/
 	}
 }
-//void OperatingSystem::displayConnectedDevices();
 
-void OperatingSystem::onSync(string deviceName) {
+void OperatingSystem::displayConnectedDevices() {
 
+	for (unordered_map<string, shared_ptr<Device>>::iterator itr = this->devices.begin(); itr != this->devices.end(); ++itr) {
+		
+		if (itr->second->isConnected()) {
+			cout << itr->first << " is a ";
+			itr->second->display();
+		}
+	}
+}
+
+void OperatingSystem::onSync(string deviceName, FileHandler::FileType type) {
+
+	if (isInstalled(deviceName)) {
+
+		shared_ptr<Operations::Syncable> ptr = dynamic_pointer_cast<Operations::Syncable>(this->devices[deviceName]);
+		if (ptr) {
+
+			unordered_map<FileHandler::FileType, forward_list<string>> os = FileHandler::pleb_key(*this);
+			unordered_map<FileHandler::FileType, forward_list<string>> device = FileHandler::pleb_key(*ptr);
+			ptr->sync(ptr->update(FileHandler::diff_key(FileHandler::master_key(os, device), device, type)));
+			ptr->sync(this->update(FileHandler::diff_key(FileHandler::master_key(os, device), os, type)));
+			cout << "Finished Syncing" << endl;
+		}
+	}
 }
 
 void OperatingSystem::onScan(string deviceName, string fileName) {
+	
+	
+	if (isInstalled(deviceName)) {
 
+		if (!this->contains(fileName)) {
+
+			shared_ptr<Operations::Scannable> ptr = dynamic_pointer_cast<Operations::Scannable>(this->devices[deviceName]);
+			if (ptr) {
+
+				FileHandler::FileType type = FileHandler::toFileType(fileName.substr(fileName.length() - 4, 4));
+				unordered_map<FileHandler::FileType, forward_list<string>> os = FileHandler::pleb_key(*this);
+				os[type].push_front(fileName);
+				this->update(os);
+				ptr->scan(fileName, type);
+			}
+		}
+		else {
+			cout << fileName << " Already Exists" << endl;
+		}
+	}
 }
 
 void OperatingSystem::onPrint(string deviceName, string fileName) {
 
+	if (isInstalled(deviceName)) {
+		if (this->contains(fileName)) {
 
+			shared_ptr<Operations::Printable> ptr = dynamic_pointer_cast<Operations::Printable>(this->devices[deviceName]);
+			if (ptr) {
+
+				ptr->print(fileName, FileHandler::toFileType(fileName.substr(fileName.length() - 4, 4)));
+			}
+		}
+	}
 }

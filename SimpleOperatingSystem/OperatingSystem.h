@@ -36,7 +36,7 @@ public:
 	void displayInstalledDevices();
 	void displayConnectedDevices();
 
-	void onSync(string deviceName);
+	void onSync(string deviceName, FileHandler::FileType type);
 	void onScan(string deviceName, string fileName);
 	void onPrint(string deviceName, string fileName);
 };

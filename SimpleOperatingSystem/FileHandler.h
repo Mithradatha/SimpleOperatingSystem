@@ -34,12 +34,12 @@ namespace FileHandler {
 		void setPath(std::string path);
 
 		std::unordered_map<FileType, int> update(std::unordered_map<FileType, std::forward_list<std::string>> master);
-		bool contains(std::string, FileType type);
+		bool contains(std::string fileName);
 	};
 
 	std::unordered_map<FileType, std::forward_list<std::string>> pleb_key(Configurable obj);
-	std::unordered_map<FileType, std::forward_list<std::string>> master_key(std::unordered_map<FileType, std::forward_list<std::string>> pleb_key1,
-		std::unordered_map<FileType, std::forward_list<std::string>> pleb_key2);
+	std::unordered_map<FileType, std::forward_list<std::string>> master_key(std::unordered_map<FileType, std::forward_list<std::string>> pleb_key1, std::unordered_map<FileType, std::forward_list<std::string>> pleb_key2);
+	std::unordered_map<FileType, std::forward_list<std::string>> diff_key(std::unordered_map<FileType, std::forward_list<std::string>> master, std::unordered_map<FileType, std::forward_list<std::string>> pleb_key, FileHandler::FileType type);
 }
 
 #endif

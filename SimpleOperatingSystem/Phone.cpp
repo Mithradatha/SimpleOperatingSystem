@@ -26,6 +26,6 @@ void Phone::sync(unordered_map<FileHandler::FileType, int> updates) {
 
 	for (unordered_map<FileHandler::FileType, int>::iterator itr = updates.begin(); itr != updates.end(); ++itr) {
 
-		cout << FileHandler::toString(itr->first) << ": " << itr->second << endl;
+		if (itr->second > 0) RNGesus::initialize(itr->second, itr->first, "Syncing... ");
 	}
 }

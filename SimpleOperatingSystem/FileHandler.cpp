@@ -37,18 +37,17 @@ namespace FileHandler {
 
 	FileType toFileType(string str) {
 
-		if (str == "DOCUMENT") {
+		if (str == "DOCUMENT" || str == ".doc") {
 			return FileType::DOCUMENT;
 		}
-		else if (str == "MUSIC") {
+		else if (str == "MUSIC" || str == ".mp3") {
 			return FileType::MUSIC;
 		}
-		else if (str == "PICTURE") {
+		else if (str == "PICTURE" || str == ".jpg") {
 			return FileType::PICTURE;
 		}
 		else {
 			cerr << "Not A Valid File Type" << endl;
-			return FileType::DOCUMENT;
 		}
 	}
 
@@ -153,7 +152,29 @@ namespace FileHandler {
 		return updates;
 	}
 
-	bool Configurable::contains(std::string, FileType type) { return true; }
+	bool Configurable::contains(std::string fileName) {
+
+		bool present = false;
+
+		fstream mFile;
+		mFile.open(this->getPath(), ios::in);
+		if (mFile.is_open()) {
+		
+			string line;
+			while (getline(mFile, line)) {
+
+				size_t pos = line.find(fileName);
+				if (pos != string::npos) {
+					present = true;
+					break;
+				}
+			}
+
+			mFile.close();
+		}
+
+		return present;
+	}
 
 	unordered_map<FileType, forward_list<string>> pleb_key(Configurable obj) {
 
@@ -227,5 +248,11 @@ namespace FileHandler {
 		}
 
 		return master_key;
+	}
+
+	unordered_map<FileType, forward_list<string>> diff_key(unordered_map<FileType, forward_list<string>> master, unordered_map<FileType, forward_list<string>> pleb_key, FileHandler::FileType type) {
+
+		pleb_key[type] = master[type];
+		return pleb_key;
 	}
 }

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "FileHandler.h"
+#include "RNGesus.h"
 
 /**
 * Functional interface container for various device behaviours
@@ -21,14 +22,14 @@ namespace Operations {
 
 	public:
 
-		virtual void scan(std::unordered_map<FileHandler::FileType, int> updates) = 0;
+		virtual void scan(std::string fileName, FileHandler::FileType type) = 0;
 	};
 	
 	class Printable {
 
 	public:
 
-		virtual void print(std::unordered_map<FileHandler::FileType, int> updates) = 0;
+		virtual void print(std::string fileName, FileHandler::FileType type) = 0;
 	};
 }
 
