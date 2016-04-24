@@ -93,6 +93,33 @@ namespace FileHandler {
 
 	// return a master_key representing the combination of a pleb_key and a single list of files, associated with the passed file type, from the master_key
 	std::unordered_map<FileType, std::forward_list<std::string>> diff_key(std::unordered_map<FileType, std::forward_list<std::string>> master, std::unordered_map<FileType, std::forward_list<std::string>> pleb_key, FileHandler::FileType type);
+
+
+											
+	
+											/* OPERATING SYSTEM CONFIGURATION FILE */
+
+				/* BEFORE UNINITIALIZATION */										/* AFTER UNINTIALIZATION */
+
+	// SystemConfigFile.txt												// SystemConfigFile.txt
+	//**********************************************//					//**********************************************//
+	//MUSIC: [reggae.mp3]							//					//MUSIC: [reggae.mp3]							//
+	//PICTURE: [Thor.jpg, Apocalypse.jpg]			//					//PICTURE: [Thor.jpg, Apocalypse.jpg]			//
+	//DOCUMENT: [Lab_1.doc, Lab_2.doc, bonus.doc]	//					//DOCUMENT: [Lab_1.doc, Lab_2.doc, bonus.doc]	//
+	//												//					///*											//
+	//**********************************************//					//{phone}(PhoneConfigFile.txt)					//		
+																		//{printer}										//
+																		//*/											//
+																		//												//
+																		//**********************************************//
+			/* PHONE CONFIGURATION FILE */
+
+	// PhoneConfigFile.txt
+	//**********************************************//
+	//MUSIC: [punk.mp3]								//
+	//PICTURE: [Beyonder.jpg, Apocalypse.jpg]		//
+	//												//
+	//**********************************************//
 }
 
 #endif

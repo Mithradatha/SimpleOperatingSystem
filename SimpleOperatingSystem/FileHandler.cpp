@@ -115,7 +115,7 @@ namespace FileHandler {
 					size_t end = line.find_first_of(']');
 					while (end == string::npos) {	// if the array spans more than one line
 						getline(mFile, line);
-						elements.append(" " + line);	// append each line to the string holding the file names// if the array spans more than one line
+						elements.append(" " + line);	// append each line to the string holding the file names
 						end = line.find_first_of(']');
 					}
 
@@ -175,7 +175,7 @@ namespace FileHandler {
 			while (getline(mFile, line)) {
 
 				size_t pos = line.find(fileName);
-				if (pos != string::npos) {	// if the fileName is found, break and return true
+				if (pos != string::npos) {	// if the file name is found, break and return true
 					present = true;
 					break;
 				}
