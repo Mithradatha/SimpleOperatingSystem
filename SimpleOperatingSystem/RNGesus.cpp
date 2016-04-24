@@ -38,22 +38,24 @@ namespace RNGesus {
 
 		std::uniform_int_distribution<int> distribution(min, max);
 
-		int current = time(0);
-		int last = current;
-		int total = current + distribution(generator) * count;
-		int increment = total / 5;
+		time_t begin = time(0);
+		time_t end = begin + distribution(generator) * count;
+		time_t last = 0;
+		time_t current = 0;
+		end = end - begin;
+		double increment = end / 10.0;
 		
 		showProgress(0, other);
 
-		while (current < total) {
+		while (current < end) {
 
 			if ((current - last) > increment) {
 
-				showProgress(((current / total) * 100), other);
+				showProgress(((current / (double)end) * 100), other);
 				last = current;
 			}
 
-			current = time(0);
+			current = time(0) - begin;
 		}
 
 		showProgress(100, other);

@@ -5,13 +5,8 @@
 
 class Phone : public Device, public Operations::Syncable {
 
-private:
-
-	static int count;
-
 public:
 
-	Phone();
 	Phone(string path);
 
 	void display();

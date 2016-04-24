@@ -1,6 +1,7 @@
 #ifndef OPERATINGSYSTEM_H
 #define OPERATINGSYSTEM_H
 
+#include <typeinfo>
 #include <memory>
 #include <ctime>
 #include "Device.h"
@@ -18,6 +19,7 @@ private:
 
 	bool isValidExtension(string str, string extension);
 	bool isInstalled(string deviceName);
+	bool isOperable(const type_info& left, const type_info& right);
 
 public:
 

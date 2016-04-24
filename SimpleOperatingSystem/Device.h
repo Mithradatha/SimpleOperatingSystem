@@ -6,6 +6,16 @@
 
 using namespace std;
 
+/*
+* Abstract class for Peripheral Devices
+*
+* All derived classes inherit the 'connected' state,
+* as well as a getter/setter for that member.
+*
+* All derived classes MUST implement the 'display' function,
+* or pass the responsibility to their children.
+*/
+
 class Device {
 
 private:
@@ -14,9 +24,9 @@ private:
 
 public:
 
-	bool isConnected() { return this->connected; }
+	bool isConnected() { return this->connected; }	// is the device currenty connected?
 
-	void setConnection(bool val) { this->connected = val; }
+	void setConnection(bool val) { this->connected = val; }	// set the device's connection state
 
 	virtual void display() = 0;
 };

@@ -24,17 +24,24 @@ bool OperatingSystem::isInstalled(string deviceName) {
 	return (this->devices.find(deviceName) != this->devices.end());
 }
 
+bool OperatingSystem::isOperable(const type_info& left, const type_info& right) {
+
+	return left.hash_code() == right.hash_code();
+}
+
 bool OperatingSystem::installDeviceDriver(string deviceName, int type, string path) {
 
 	switch (type) {
 	case 1:
 		if (path.length() > 1) { this->devices.insert(make_pair(deviceName, shared_ptr<Device>(new Phone(path)))); }
-		else { this->devices.insert(make_pair(deviceName, shared_ptr<Device>(new Phone))); }
-		cout << "Installing Phone Device Driver... " << deviceName << endl;
+		else { this->devices.insert(make_pair(deviceName, shared_ptr<Device>(new Phone("my_phone_config_" + string(to_string(time(0))) + ".txt")))); }
+		RNGesus::initialize(1, FileHandler::FileType::PICTURE, "Installing Phone Device Driver... ");
+		cout << "Installed " << deviceName << endl;
 		return true;
 	case 2:
 		this->devices.insert(make_pair(deviceName, shared_ptr<Device>(new Printer)));
-		cout << "Installing Printer Device Driver... " << deviceName << endl;
+		RNGesus::initialize(1, FileHandler::FileType::PICTURE, "Installing Printer Device Driver... ");
+		cout << "Installed " << deviceName << endl;
 		return true;
 	default:
 		cout << "Invalid Device Type" << endl;
@@ -155,12 +162,15 @@ void OperatingSystem::connectDevice(string deviceName) {
 					cout << "Enter the Phone's configuration file name: ";
 					string path;
 					getline(cin, path);
-					if (!isValidExtension(path, ".txt")) {
-						cout << "Invalid Extension!" << endl;
+					if (isValidExtension(path, ".txt")) {
+						
+						if (installDeviceDriver(deviceName, 1, path)) {
+							this->devices[deviceName]->setConnection(true);
+							cout << "Device Connected" << endl;
+						}
 					}
-					if (installDeviceDriver(deviceName, 1, path)) {
-						this->devices[deviceName]->setConnection(true);
-						cout << "Device Connected" << endl;
+					else {
+						cout << "Invalid Extension: Must Be \'.txt\' Extension" << endl;
 					}
 				}
 				else {
@@ -228,15 +238,24 @@ void OperatingSystem::onSync(string deviceName, FileHandler::FileType type) {
 
 	if (isInstalled(deviceName)) {
 
-		shared_ptr<Operations::Syncable> ptr = dynamic_pointer_cast<Operations::Syncable>(this->devices[deviceName]);
-		if (ptr) {
+		if (this->devices[deviceName]->isConnected()) {
 
-			unordered_map<FileHandler::FileType, forward_list<string>> os = FileHandler::pleb_key(*this);
-			unordered_map<FileHandler::FileType, forward_list<string>> device = FileHandler::pleb_key(*ptr);
-			ptr->sync(ptr->update(FileHandler::diff_key(FileHandler::master_key(os, device), device, type)));
-			ptr->sync(this->update(FileHandler::diff_key(FileHandler::master_key(os, device), os, type)));
-			cout << "Finished Syncing" << endl;
+			shared_ptr<Operations::Syncable> ptr = dynamic_pointer_cast<Operations::Syncable>(this->devices[deviceName]);
+			if (ptr) {
+
+				unordered_map<FileHandler::FileType, forward_list<string>> os = FileHandler::pleb_key(*this);
+				unordered_map<FileHandler::FileType, forward_list<string>> device = FileHandler::pleb_key(*ptr);
+				ptr->sync(ptr->update(FileHandler::diff_key(FileHandler::master_key(os, device), device, type)));
+				ptr->sync(this->update(FileHandler::diff_key(FileHandler::master_key(os, device), os, type)));
+				cout << "Finished Syncing" << endl;
+			}
 		}
+		else {
+			cout << "Device Not Connected" << endl;
+		}
+	}
+	else {
+		cout << "Device Not Recognized" << endl;
 	}
 }
 
@@ -245,34 +264,68 @@ void OperatingSystem::onScan(string deviceName, string fileName) {
 	
 	if (isInstalled(deviceName)) {
 
-		if (!this->contains(fileName)) {
+		if (this->devices[deviceName]->isConnected()) {
 
-			shared_ptr<Operations::Scannable> ptr = dynamic_pointer_cast<Operations::Scannable>(this->devices[deviceName]);
-			if (ptr) {
+			if (isValidExtension(fileName, ".doc") || isValidExtension(fileName, ".jpg")) {
 
-				FileHandler::FileType type = FileHandler::toFileType(fileName.substr(fileName.length() - 4, 4));
-				unordered_map<FileHandler::FileType, forward_list<string>> os = FileHandler::pleb_key(*this);
-				os[type].push_front(fileName);
-				this->update(os);
-				ptr->scan(fileName, type);
+				if (!this->contains(fileName)) {
+
+					shared_ptr<Operations::Scannable> ptr = dynamic_pointer_cast<Operations::Scannable>(this->devices[deviceName]);
+					if (ptr) {
+
+						FileHandler::FileType type = FileHandler::toFileType(fileName.substr(fileName.length() - 4, 4));
+						unordered_map<FileHandler::FileType, forward_list<string>> os = FileHandler::pleb_key(*this);
+						os[type].push_front(fileName);
+						this->update(os);
+						ptr->scan(fileName, type);
+					}
+				}
+				else {
+					cout << fileName << " Already Exists" << endl;
+				}
+			}
+			else {
+				cout << "Invalid Extension: " << endl;
 			}
 		}
 		else {
-			cout << fileName << " Already Exists" << endl;
+			cout << "Device Not Connected" << endl;
 		}
+	}
+	else {
+		cout << "Device Not Recognized" << endl;
 	}
 }
 
 void OperatingSystem::onPrint(string deviceName, string fileName) {
 
 	if (isInstalled(deviceName)) {
-		if (this->contains(fileName)) {
 
-			shared_ptr<Operations::Printable> ptr = dynamic_pointer_cast<Operations::Printable>(this->devices[deviceName]);
-			if (ptr) {
+		if (this->devices[deviceName]->isConnected()) {
 
-				ptr->print(fileName, FileHandler::toFileType(fileName.substr(fileName.length() - 4, 4)));
+			if (isValidExtension(fileName, ".doc") || isValidExtension(fileName, ".jpg")) {
+
+				if (this->contains(fileName)) {
+
+					shared_ptr<Operations::Printable> ptr = dynamic_pointer_cast<Operations::Printable>(this->devices[deviceName]);
+					if (ptr) {
+
+						ptr->print(fileName, FileHandler::toFileType(fileName.substr(fileName.length() - 4, 4)));
+					}
+				}
+				else {
+					cout << "File Not Found" << endl;
+				}
+			}
+			else {
+				cout << "Invalid Extension: " << endl;
 			}
 		}
+		else {
+			cout << "Device Not Connected" << endl;
+		}
+	}
+	else {
+		cout << "Device Not Recognized" << endl;
 	}
 }
