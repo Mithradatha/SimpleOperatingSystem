@@ -14,6 +14,9 @@ using namespace std;
 *
 * All derived classes MUST implement the 'display' function,
 * or pass the responsibility to their children.
+*
+* All derived classes CAN implement behaviors from the 
+* included 'Operations' namespace
 */
 
 class Device {

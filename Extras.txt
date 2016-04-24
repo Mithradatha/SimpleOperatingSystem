@@ -1,0 +1,43 @@
+/*shared_ptr<Operations::Syncable> ptr = dynamic_pointer_cast<Operations::Syncable>(itr->second);
+		if (ptr) {
+
+			unordered_map<FileHandler::FileType, forward_list<string>> master = FileHandler::master_key(FileHandler::pleb_key(*ptr), FileHandler::pleb_key(*this));
+
+			for (unordered_map<FileHandler::FileType, forward_list<string>>::iterator masterITR = master.begin(); masterITR != master.end(); ++masterITR) {
+
+				forward_list<string> changed = masterITR->second;
+				cout << FileHandler::toString(masterITR->first) << ": [";
+				bool first = true;
+
+				for (forward_list<string>::iterator innerITR = changed.begin(); innerITR != changed.end(); ++innerITR) {
+					if (first) { cout << *innerITR; first = false; }
+					else cout << ", " << *innerITR;
+				}
+				cout << "]" << endl;
+			}
+
+			ptr->sync(ptr->update(master));
+			this->update(master);
+		}*/
+
+		/*shared_ptr<Operations::Syncable> ptr = dynamic_pointer_cast<Operations::Syncable>(itr->second);
+		if (ptr) {
+
+		unordered_set<FileHandler::FileType> set = ptr->getFileTypes();
+		for (unordered_set<FileHandler::FileType>::iterator pItr = set.begin(); pItr != set.end(); ++pItr) {
+		cout << FileHandler::toString(*pItr) << endl;
+		}
+
+		unordered_map<string, forward_list<string>> files = FileHandler::pleb_key(*ptr);
+		for (unordered_map<string, forward_list<string>>::iterator mItr = files.begin(); mItr != files.end(); ++mItr) {
+
+		forward_list<string> changed = mItr->second;
+		cout << mItr->first << ": [";
+		bool first = true;
+
+		for (forward_list<string>::iterator fItr = changed.begin(); fItr != changed.end(); ++fItr) {
+		if (first) { cout << *fItr; first = false; }
+		else cout << ", " << *fItr;
+		}
+		cout << "]" << endl;
+		}*/

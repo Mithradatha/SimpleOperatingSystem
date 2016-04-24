@@ -122,6 +122,7 @@ void main_menu(const string& sysConfig) {
 								string deviceName;
 								getline(cin, deviceName);
 
+								// TODO: Validate Input; convert lowercase/uppercase
 								cout << "File Type (MUSIC, PHOTOS): ";
 								string fileType;
 								getline(cin, fileType);

@@ -129,7 +129,7 @@ namespace FileHandler {
 						}
 						updates.insert(make_pair(type, count));	// add a new key[FileType]-value[nChanges] pair to the list of updates
 					}
-					catch (const out_of_range& err) {}	// TODO: Throw again
+					catch (const out_of_range&) {}	// TODO: Throw again
 				}
 			}
 
